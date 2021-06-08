@@ -1,13 +1,7 @@
 import scrapy
 
-from .xpath_selectors import DATA_VACANCY
+from .xpath_selectors import DATA_VACANCY, DATA_EMPLOYER
 from ..loaders import AutoHhLoaders
-
-# 1. название вакансии
-# 2. оклад (строкой от до или просто сумма)
-# 3. Описание вакансии
-# 4. ключевые навыки - в виде списка названий
-# 5. ссылка на автора вакансии
 
 
 class HhSpider(scrapy.Spider):
@@ -29,5 +23,17 @@ class HhSpider(scrapy.Spider):
         loader = AutoHhLoaders(response=response)
         loader.add_value("url", response.url)
         for key, value in DATA_VACANCY.items():
+            loader.add_xpath(field_name=key, **value)
+            # переход к парсингу страницы автора объявления
+            if key == 'author_url':
+                yield from self._get_follow(response, value["xpath"], self.employer_parse)
+        yield loader.load_item()
+
+    def employer_parse(self, response):
+        # переход к парсингу всех объявлений этого автора
+        yield from self._get_follow(response, '//a[@data-qa="employer-page__employer-vacancies-link"]/@href',
+                                    self.parse)
+        loader = AutoHhLoaders(response=response)
+        for key, value in DATA_EMPLOYER.items():
             loader.add_xpath(field_name=key, **value)
         yield loader.load_item()

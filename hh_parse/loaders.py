@@ -14,9 +14,7 @@ def clear_salary(salary: str):
 
 
 def glue_description(description):
-    result = ''
-    for i in description:
-        result += i
+    result = ''.join(description)
     return result
 
 
@@ -34,3 +32,6 @@ class AutoHhLoaders(ItemLoader):
     salary_out = TakeFirst()
     description_in = MapCompose(glue_description)
     author_url_in = MapCompose(create_author_link)
+    site_in = TakeFirst()
+    company_name_in = TakeFirst()
+    description_employer_in = MapCompose(glue_description, clear_salary)
