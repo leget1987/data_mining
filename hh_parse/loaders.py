@@ -32,6 +32,18 @@ class AutoHhLoaders(ItemLoader):
     salary_out = TakeFirst()
     description_in = MapCompose(glue_description)
     author_url_in = MapCompose(create_author_link)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_value('item_type', 'vacancy')
+
+
+class AutoHhLoaderCompany(ItemLoader):
+    default_item_class = dict
     site_in = TakeFirst()
     company_name_in = TakeFirst()
     description_employer_in = MapCompose(glue_description, clear_salary)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_value('item_type', 'company')

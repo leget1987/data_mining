@@ -1,7 +1,7 @@
 import scrapy
 
 from .xpath_selectors import DATA_VACANCY, DATA_EMPLOYER
-from ..loaders import AutoHhLoaders
+from ..loaders import AutoHhLoaders, AutoHhLoaderCompany
 
 
 class HhSpider(scrapy.Spider):
@@ -31,9 +31,9 @@ class HhSpider(scrapy.Spider):
 
     def employer_parse(self, response):
         # переход к парсингу всех объявлений этого автора
-        yield from self._get_follow(response, '//a[@data-qa="employer-page__employer-vacancies-link"]/@href',
+        self._get_follow(response, '//a[@data-qa="employer-page__employer-vacancies-link"]/@href',
                                     self.parse)
-        loader = AutoHhLoaders(response=response)
+        loader = AutoHhLoaderCompany(response=response)
         for key, value in DATA_EMPLOYER.items():
             loader.add_xpath(field_name=key, **value)
         yield loader.load_item()

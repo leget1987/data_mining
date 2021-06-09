@@ -22,5 +22,6 @@ class HhMongoPipeline:
         self.db = client[BOT_NAME]
 
     def process_item(self, item, spider):
-        self.db[spider.name].insert_one(item)
+        collection_name = f"{spider.name}_{item.get('item_type', '')}"
+        self.db[collection_name].insert_one(item)
         return item
