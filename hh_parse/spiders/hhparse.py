@@ -6,7 +6,7 @@ from ..loaders import AutoHhLoaders, AutoHhLoaderCompany
 
 class HhSpider(scrapy.Spider):
     name = 'hh_parse'
-    allowed_domains = ['hh.ru/', 'podolsk.hh.ru']
+    allowed_domains = ['hh.ru', '*.hh.ru']
     start_urls = ['https://hh.ru/search/vacancy?schedule=remote&L_profession_id=0&area=113']
 
     def _get_follow(self, response, selector, callback) -> object:
